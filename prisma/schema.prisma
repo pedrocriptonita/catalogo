@@ -1,0 +1,154 @@
+// ============================================================================
+// PRD — Catálogo Online de Atacado (Vitrine de Exposição) | BarvoxIA
+// Schema Prisma para PostgreSQL (Supabase)
+// ============================================================================
+// MODELO: Vitrine de EXPOSIÇÃO. Não há carrinho, pedido, quantidade nem
+// estoque numérico. O objetivo é expor peças de forma visual e converter o
+// interesse em uma conversa no WhatsApp. A venda acontece 100% no WhatsApp.
+// ============================================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+// Disponibilidade da peça. Substitui o controle de estoque numérico.
+enum ProductAvailability {
+  DISPONIVEL
+  ESGOTADO
+}
+
+// Destaque visual da peça na vitrine (badge no card).
+enum ProductHighlight {
+  NENHUM
+  NOVIDADE
+  MAIS_VENDIDA
+}
+
+// ============================================================================
+// ADMIN — espelha o usuário do Supabase Auth (via authId = auth.users.id)
+// ============================================================================
+model Admin {
+  id        String    @id @default(cuid())
+  authId    String    @unique @map("auth_id")
+  email     String    @unique
+  name      String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([deletedAt])
+  @@map("admins")
+}
+
+// ============================================================================
+// STORE (Loja) — single-tenant no MVP
+// ============================================================================
+model Store {
+  id               String   @id @default(cuid())
+  name             String
+  whatsappNumber   String   @map("whatsapp_number") // E.164, ex: 5599999999999
+  whatsappGreeting String?  @map("whatsapp_greeting")
+  logoUrl          String?  @map("logo_url")
+  instagramUrl     String?  @map("instagram_url")
+  address          String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("stores")
+}
+
+// ============================================================================
+// CATEGORY — categoria simples e única por peça, com soft delete
+// ============================================================================
+model Category {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  displayOrder Int       @default(0) @map("display_order")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  products Product[]
+
+  @@index([slug])
+  @@index([deletedAt])
+  @@map("categories")
+}
+
+// ============================================================================
+// PRODUCT (Peça) — preço em CENTAVOS, tamanhos como String[] informativo
+// ============================================================================
+model Product {
+  id             String              @id @default(cuid())
+  name           String
+  slug           String              @unique
+  code           String?             @unique
+  description    String?
+  price          Int // centavos: 2990 = R$ 29,90
+  availableSizes String[]            @map("available_sizes")
+  availability   ProductAvailability @default(DISPONIVEL)
+  highlight      ProductHighlight    @default(NENHUM)
+  isActive       Boolean             @default(true) @map("is_active")
+  categoryId     String              @map("category_id")
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+  deletedAt      DateTime?           @map("deleted_at")
+
+  category Category       @relation(fields: [categoryId], references: [id])
+  images   ProductImage[]
+  colors   ProductColor[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([isActive, deletedAt])
+  @@index([availability])
+  @@index([highlight])
+  @@map("products")
+}
+
+// ============================================================================
+// PRODUCT_IMAGE — 1 a 5 fotos por peça (limite validado no app)
+// ============================================================================
+model ProductImage {
+  id           String   @id @default(cuid())
+  productId    String   @map("product_id")
+  url          String
+  storagePath  String   @map("storage_path")
+  alt          String?
+  displayOrder Int      @default(0) @map("display_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, displayOrder])
+  @@map("product_images")
+}
+
+// ============================================================================
+// PRODUCT_COLOR — lista informativa de cores, hex opcional para swatch
+// ============================================================================
+model ProductColor {
+  id        String   @id @default(cuid())
+  productId String   @map("product_id")
+  name      String
+  hex       String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, name])
+  @@index([productId])
+  @@map("product_colors")
+}
