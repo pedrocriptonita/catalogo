@@ -56,6 +56,7 @@ async function main() {
       description:
         "Blusa cropped em malha canelada de alta qualidade. Modelagem ajustada ao corpo, ideal para revenda — gira muito no verão.",
       price: 2490,
+      priceNote: "A partir de 6 peças: R$ 21,99 a und.",
       availableSizes: ["P", "M", "G"],
       availability: "DISPONIVEL" as const,
       highlight: "NOVIDADE" as const,

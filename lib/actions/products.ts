@@ -14,6 +14,7 @@ const productSchema = z.object({
   code: z.string().trim().max(50).optional(),
   description: z.string().trim().max(2000).optional(),
   price: z.string().trim().min(1, "Informe o preço"),
+  priceNote: z.string().trim().max(140, "Observação muito longa (máx. 140 caracteres)").optional(),
   categoryId: z.string().min(1, "Escolha uma categoria"),
   sizes: z.string().optional(), // JSON: ["P","M","G"]
   availability: z.enum(["DISPONIVEL", "ESGOTADO"]).default("DISPONIVEL"),
@@ -26,6 +27,7 @@ type ParsedProduct = {
   code: string | null;
   description: string | null;
   price: number;
+  priceNote: string | null;
   categoryId: string;
   availableSizes: string[];
   availability: "DISPONIVEL" | "ESGOTADO";
@@ -42,6 +44,7 @@ function parseForm(formData: FormData): {
     code: formData.get("code") ?? undefined,
     description: formData.get("description") ?? undefined,
     price: formData.get("price"),
+    priceNote: formData.get("priceNote") ?? undefined,
     categoryId: formData.get("categoryId"),
     sizes: formData.get("sizes") ?? undefined,
     availability: formData.get("availability") ?? "DISPONIVEL",
@@ -81,6 +84,7 @@ function parseForm(formData: FormData): {
       code: parsed.data.code || null,
       description: parsed.data.description || null,
       price: cents,
+      priceNote: parsed.data.priceNote || null,
       categoryId: parsed.data.categoryId,
       availableSizes: sizes,
       availability: parsed.data.availability,

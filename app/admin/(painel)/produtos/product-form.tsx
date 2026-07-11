@@ -28,6 +28,7 @@ export type ProductFormData = {
   code: string | null;
   description: string | null;
   price: number; // centavos
+  priceNote: string | null;
   categoryId: string;
   availableSizes: string[];
   availability: "DISPONIVEL" | "ESGOTADO";
@@ -150,6 +151,21 @@ export function ProductForm({
               </Select>
               <FieldError message={erros.categoryId} />
             </div>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="priceNote">Observação de preço</Label>
+            <Input
+              id="priceNote"
+              name="priceNote"
+              maxLength={140}
+              defaultValue={product?.priceNote ?? ""}
+              placeholder="Ex: a partir de 6 peças: 31,99 a und."
+            />
+            <p className="text-muted-foreground text-xs">
+              Aparece junto do preço no card e na página da peça. Deixe vazio para não exibir.
+            </p>
+            <FieldError message={erros.priceNote} />
           </div>
 
           <div className="grid gap-2">

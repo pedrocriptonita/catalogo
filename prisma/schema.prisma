@@ -95,6 +95,7 @@ model Product {
   code           String?             @unique
   description    String?
   price          Int // centavos: 2990 = R$ 29,90
+  priceNote      String?             @map("price_note") // Ex: "A partir de 6 peças: R$ 31,99 a und."
   availableSizes String[]            @map("available_sizes")
   availability   ProductAvailability @default(DISPONIVEL)
   highlight      ProductHighlight    @default(NENHUM)

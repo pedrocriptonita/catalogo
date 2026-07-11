@@ -10,6 +10,7 @@ type ProductCardData = {
   slug: string;
   code: string | null;
   price: number;
+  priceNote: string | null;
   availability: "DISPONIVEL" | "ESGOTADO";
   highlight: "NENHUM" | "NOVIDADE" | "MAIS_VENDIDA";
   images: { url: string; alt?: string | null }[];
@@ -25,7 +26,7 @@ export function ProductCard({ product, store }: { product: ProductCardData; stor
   const esgotado = product.availability === "ESGOTADO";
 
   return (
-    <div className="group bg-card flex flex-col overflow-hidden rounded-xl border shadow-sm transition-shadow hover:shadow-md">
+    <div className="group bg-card card-fade-in flex flex-col overflow-hidden rounded-xl border shadow-sm transition-shadow hover:shadow-md">
       <Link
         href={`/produtos/${product.slug}`}
         className="relative block aspect-[4/5] overflow-hidden bg-muted"
@@ -57,6 +58,11 @@ export function ProductCard({ product, store }: { product: ProductCardData; stor
             {product.name}
           </h3>
           <p className="text-primary text-lg font-semibold">{formatPrice(product.price)}</p>
+          {product.priceNote && (
+            <p className="text-accent-foreground bg-accent mt-1 w-fit max-w-full truncate rounded-md px-2 py-0.5 text-xs font-medium">
+              {product.priceNote}
+            </p>
+          )}
         </Link>
         <div className="mt-auto">
           <WhatsAppButton product={product} store={store} size="sm" />

@@ -75,6 +75,7 @@ export default async function EditarPecaPage({
           code: produto.code,
           description: produto.description,
           price: produto.price,
+          priceNote: produto.priceNote,
           categoryId: produto.categoryId,
           availableSizes: produto.availableSizes,
           availability: produto.availability,

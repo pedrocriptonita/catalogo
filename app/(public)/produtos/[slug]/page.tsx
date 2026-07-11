@@ -85,10 +85,17 @@ export default async function ProdutoPage({ params }: PageParams) {
             )}
           </div>
 
-          <p className="text-primary text-3xl font-bold">
-            {formatPrice(produto.price)}
-            <span className="text-muted-foreground ml-2 text-sm font-normal">no atacado</span>
-          </p>
+          <div>
+            <p className="text-primary text-3xl font-bold">
+              {formatPrice(produto.price)}
+              <span className="text-muted-foreground ml-2 text-sm font-normal">no atacado</span>
+            </p>
+            {produto.priceNote && (
+              <p className="text-accent-foreground bg-accent mt-2 w-fit rounded-md px-3 py-1 text-sm font-medium">
+                {produto.priceNote}
+              </p>
+            )}
+          </div>
 
           {produto.description && (
             <p className="text-muted-foreground whitespace-pre-line text-sm leading-relaxed">

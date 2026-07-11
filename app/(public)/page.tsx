@@ -50,6 +50,7 @@ export default async function VitrinePage({
                 slug: produto.slug,
                 code: produto.code,
                 price: produto.price,
+                priceNote: produto.priceNote,
                 availability: produto.availability,
                 highlight: produto.highlight,
                 images: produto.images.map((img) => ({ url: img.url, alt: img.alt })),
