@@ -6,7 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mjs,js}": "eslint --fix",
+    "*.{ts,tsx,mjs,js,css,md,json}": "prettier --write"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
@@ -36,6 +46,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.5",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.0",
